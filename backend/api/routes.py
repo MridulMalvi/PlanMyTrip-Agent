@@ -11,6 +11,7 @@ from fastapi.responses import StreamingResponse
 
 from api.schemas import TripRequest, TripPlanResponse, AgentUpdate, TripPlan, StreamEvent
 from core.config import Settings, get_settings
+from crew import build_crew, build_crew_streaming
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,6 @@ async def plan_trip(
         raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured.")
 
     try:
-        from crew import build_crew
         result = build_crew(request, settings)
         return TripPlanResponse(
             success=True,
@@ -93,7 +93,6 @@ async def _stream_plan(
         loop.call_soon_threadsafe(queue.put_nowait, event)
 
     def run_crew():
-        from crew import build_crew_streaming
         try:
             plan_dict = build_crew_streaming(request, settings, callback)
             plan = TripPlan(**plan_dict)

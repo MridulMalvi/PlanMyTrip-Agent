@@ -15,9 +15,7 @@ for _p in (_HERE, _BACKEND):
         sys.path.insert(0, _p)
 
 from typing import Callable, Optional
-from crewai import Crew, Task, Process
-from crewai.agents.agent_builder.base_agent_executor_mixin import CrewAgentExecutorMixin
-from langchain_openai import ChatOpenAI
+from crewai import Crew, Task, Process, LLM
 
 from agents.planning_agent import build_planning_agent
 from agents.optimization_agent import build_optimization_agent
@@ -146,7 +144,7 @@ def _make_tasks(request: TripRequest, planner, optimizer, budgeter, local_exp):
 
 def build_crew(request: TripRequest, settings: Settings) -> dict:
     """Run the crew synchronously and return a result dict."""
-    llm = ChatOpenAI(
+    llm = LLM(
         model=settings.openai_model,
         api_key=settings.openai_api_key,
         temperature=0.3,
@@ -221,7 +219,7 @@ def build_crew_streaming(
     callback(agent_name, status, message, output)
       status: "done" | "error"
     """
-    llm = ChatOpenAI(
+    llm = LLM(
         model=settings.openai_model,
         api_key=settings.openai_api_key,
         temperature=0.3,

@@ -14,8 +14,15 @@ from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
 
 from main import app
+from core.config import get_settings
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def cleanup_overrides():
+    yield
+    app.dependency_overrides.clear()
 
 
 # ---------------------------------------------------------------------------
@@ -59,12 +66,11 @@ MOCK_CREW_RESULT = {
 }
 
 
-@patch("api.routes.get_settings")
 @patch("api.routes.build_crew", return_value=MOCK_CREW_RESULT)
-def test_plan_trip_success(mock_build_crew, mock_get_settings):
+def test_plan_trip_success(mock_build_crew):
     mock_settings = MagicMock()
     mock_settings.openai_api_key = "sk-test-key"
-    mock_get_settings.return_value = mock_settings
+    app.dependency_overrides[get_settings] = lambda: mock_settings
 
     response = client.post("/api/trip/plan", json=SAMPLE_REQUEST)
 
@@ -76,11 +82,10 @@ def test_plan_trip_success(mock_build_crew, mock_get_settings):
     mock_build_crew.assert_called_once()
 
 
-@patch("api.routes.get_settings")
-def test_plan_trip_missing_api_key(mock_get_settings):
+def test_plan_trip_missing_api_key():
     mock_settings = MagicMock()
     mock_settings.openai_api_key = ""  # Missing key
-    mock_get_settings.return_value = mock_settings
+    app.dependency_overrides[get_settings] = lambda: mock_settings
 
     response = client.post("/api/trip/plan", json=SAMPLE_REQUEST)
 
