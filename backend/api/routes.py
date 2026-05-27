@@ -41,10 +41,10 @@ async def plan_trip(
     request: TripRequest,
     settings: Settings = Depends(get_settings),
 ) -> TripPlanResponse:
-    logger.info("Blocking plan request: %s", request.destination)
+    logger.info("Blocking plan request: %s → %s", request.origin, request.destination)
 
-    if not settings.openai_api_key:
-        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured.")
+    if not settings.gemini_api_key:
+        raise HTTPException(status_code=503, detail="GEMINI_API_KEY not configured.")
 
     try:
         result = build_crew(request, settings)
@@ -128,10 +128,10 @@ async def plan_trip_stream(
     request: TripRequest,
     settings: Settings = Depends(get_settings),
 ):
-    logger.info("Streaming plan request: %s", request.destination)
+    logger.info("Streaming plan request: %s → %s", request.origin, request.destination)
 
-    if not settings.openai_api_key:
-        raise HTTPException(status_code=503, detail="OPENAI_API_KEY not configured.")
+    if not settings.gemini_api_key:
+        raise HTTPException(status_code=503, detail="GEMINI_API_KEY not configured.")
 
     return StreamingResponse(
         _stream_plan(request, settings),

@@ -6,10 +6,13 @@ interface Props {
   disabled: boolean;
 }
 
-const PRESET_DESTINATIONS = [
+const PRESET_PLACES = [
   'Tokyo, Japan', 'Paris, France', 'Bali, Indonesia',
   'New York, USA', 'Barcelona, Spain', 'Rome, Italy',
   'Santorini, Greece', 'Dubai, UAE', 'Kyoto, Japan',
+  'London, UK', 'Singapore', 'Sydney, Australia',
+  'Mumbai, India', 'New Delhi, India', 'Bangkok, Thailand',
+  'Amsterdam, Netherlands', 'Istanbul, Turkey', 'Cape Town, South Africa',
 ];
 
 export function TripForm({ onSubmit, disabled }: Props) {
@@ -18,13 +21,15 @@ export function TripForm({ onSubmit, disabled }: Props) {
   const defaultEnd   = new Date(today.getTime() + 37 * 86400000);
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
+  const [origin, setOrigin]           = useState('');
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate]     = useState(fmt(defaultStart));
   const [endDate, setEndDate]         = useState(fmt(defaultEnd));
   const [budgetUsd, setBudgetUsd]     = useState(3000);
   const [travelers, setTravelers]     = useState(2);
   const [preferences, setPreferences] = useState('');
-  const [showPresets, setShowPresets] = useState(false);
+  const [showOriginPresets, setShowOriginPresets]           = useState(false);
+  const [showDestinationPresets, setShowDestinationPresets] = useState(false);
 
   const durationDays = Math.max(
     1,
@@ -33,8 +38,9 @@ export function TripForm({ onSubmit, disabled }: Props) {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!destination.trim()) return;
+    if (!origin.trim() || !destination.trim()) return;
     onSubmit({
+      origin: origin.trim(),
       destination: destination.trim(),
       start_date: startDate,
       end_date: endDate,
@@ -45,64 +51,103 @@ export function TripForm({ onSubmit, disabled }: Props) {
     });
   }
 
+  const placeDropdown = (
+    filter: string,
+    onSelect: (val: string) => void,
+    exclude?: string
+  ) => (
+    <div style={{
+      position: 'absolute',
+      zIndex: 50,
+      background: '#0d1320',
+      border: '1px solid var(--c-border)',
+      borderRadius: 'var(--r-md)',
+      marginTop: 4,
+      width: '100%',
+      overflow: 'hidden',
+      boxShadow: 'var(--shadow-card)',
+    }}>
+      {PRESET_PLACES
+        .filter(p => p !== exclude && (!filter || p.toLowerCase().includes(filter.toLowerCase())))
+        .slice(0, 6)
+        .map((p) => (
+          <div
+            key={p}
+            style={{
+              padding: '10px 14px',
+              fontSize: '0.85rem',
+              cursor: 'pointer',
+              color: 'var(--c-text)',
+              transition: 'background 0.15s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            onMouseDown={() => onSelect(p)}
+          >
+            <span>🌍</span> {p}
+          </div>
+        ))
+      }
+    </div>
+  );
+
   return (
     <form className="trip-form" onSubmit={handleSubmit}>
       <p className="section-title">✈️ Plan Your Trip</p>
 
-      {/* Destination */}
-      <div className="form-group">
-        <label className="form-label" htmlFor="destination">Destination</label>
-        <input
-          id="destination"
-          className="form-input"
-          type="text"
-          placeholder="e.g. Tokyo, Japan"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          onFocus={() => setShowPresets(true)}
-          onBlur={() => setTimeout(() => setShowPresets(false), 180)}
-          required
-          disabled={disabled}
-          autoComplete="off"
-        />
-        {showPresets && (
-          <div style={{
-            position: 'absolute',
-            zIndex: 50,
-            background: '#0d1320',
-            border: '1px solid var(--c-border)',
-            borderRadius: 'var(--r-md)',
-            marginTop: 4,
-            width: 'calc(100% - 48px)',
-            overflow: 'hidden',
-            boxShadow: 'var(--shadow-card)',
-          }}>
-            {PRESET_DESTINATIONS
-              .filter(d => !destination || d.toLowerCase().includes(destination.toLowerCase()))
-              .slice(0, 6)
-              .map((d) => (
-                <div
-                  key={d}
-                  style={{
-                    padding: '10px 14px',
-                    fontSize: '0.85rem',
-                    cursor: 'pointer',
-                    color: 'var(--c-text)',
-                    transition: 'background 0.15s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  onMouseDown={() => setDestination(d)}
-                >
-                  <span>🌍</span> {d}
-                </div>
-              ))
-            }
-          </div>
-        )}
+      {/* Route: Origin → Destination */}
+      <div className="form-row form-group" style={{ alignItems: 'flex-start', gap: 12 }}>
+        {/* Origin */}
+        <div style={{ flex: 1, position: 'relative' }}>
+          <label className="form-label" htmlFor="origin">Traveling From</label>
+          <input
+            id="origin"
+            className="form-input"
+            type="text"
+            placeholder="e.g. Mumbai, India"
+            value={origin}
+            onChange={(e) => setOrigin(e.target.value)}
+            onFocus={() => setShowOriginPresets(true)}
+            onBlur={() => setTimeout(() => setShowOriginPresets(false), 180)}
+            required
+            disabled={disabled}
+            autoComplete="off"
+          />
+          {showOriginPresets && placeDropdown(origin, setOrigin, destination)}
+        </div>
+
+        {/* Swap arrow */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingTop: 28,
+          color: 'var(--c-accent)',
+          fontSize: '1.2rem',
+          flexShrink: 0,
+        }}>✈️</div>
+
+        {/* Destination */}
+        <div style={{ flex: 1, position: 'relative' }}>
+          <label className="form-label" htmlFor="destination">Traveling To</label>
+          <input
+            id="destination"
+            className="form-input"
+            type="text"
+            placeholder="e.g. Tokyo, Japan"
+            value={destination}
+            onChange={(e) => setDestination(e.target.value)}
+            onFocus={() => setShowDestinationPresets(true)}
+            onBlur={() => setTimeout(() => setShowDestinationPresets(false), 180)}
+            required
+            disabled={disabled}
+            autoComplete="off"
+          />
+          {showDestinationPresets && placeDropdown(destination, setDestination, origin)}
+        </div>
       </div>
 
       {/* Dates */}
@@ -204,7 +249,7 @@ export function TripForm({ onSubmit, disabled }: Props) {
         />
       </div>
 
-      <button type="submit" className="btn-primary" disabled={disabled || !destination.trim()}>
+      <button type="submit" className="btn-primary" disabled={disabled || !origin.trim() || !destination.trim()}>
         {disabled ? (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>✦</span>

@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     cors_origins: list[str] = Field(default=["http://localhost:3000", "http://localhost:3001"])
 
     # LLM
-    openai_api_key: str = Field(default="")
-    openai_model: str = Field(default="gpt-4o")
+    gemini_api_key: str = Field(default="")
+    gemini_model: str = Field(default="gemini/gemini-2.0-flash")
 
     # Tools
     tavily_api_key: Optional[str] = Field(default=None)

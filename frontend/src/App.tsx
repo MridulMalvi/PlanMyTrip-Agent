@@ -16,7 +16,8 @@ export default function App() {
   // Auto-focus map tab after plan arrives
   useEffect(() => {
     if (isDone && plan) {
-      document.title = `${plan.destination} — TravelAgent AI`;
+      const route = plan.origin ? `${plan.origin} → ${plan.destination}` : plan.destination;
+      document.title = `${route} — TravelAgent AI`;
     } else {
       document.title = 'TravelAgent AI — AI-Powered Trip Planner';
     }
@@ -49,7 +50,7 @@ export default function App() {
                 background: 'var(--c-success)',
                 display: 'inline-block',
               }} />
-              Plan ready · {plan.destination}
+              Plan ready · {plan.origin ? `${plan.origin} → ${plan.destination}` : plan.destination}
             </div>
           )}
 
@@ -93,8 +94,16 @@ export default function App() {
 
           {/* Destination hero once plan is streaming/done */}
           {plan && (
-            <div className="dest-hero fade-in">
-              <div className="dest-name">{plan.destination}</div>
+                      <div className="dest-hero fade-in">
+              {plan.origin && (
+                <div style={{ fontSize: '0.75rem', color: 'var(--c-text-muted)', marginBottom: 4, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                  {plan.origin}
+                </div>
+              )}
+              <div className="dest-name" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {plan.origin && <span style={{ fontSize: '0.7em', opacity: 0.5 }}>✈️</span>}
+                {plan.destination}
+              </div>
               <div className="dest-meta">
                 <span className="dest-chip">📅 {plan.duration_days} days</span>
                 <span className="dest-chip">👥 {plan.travelers} traveler{plan.travelers !== 1 ? 's' : ''}</span>

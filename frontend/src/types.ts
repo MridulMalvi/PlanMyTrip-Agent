@@ -1,6 +1,7 @@
 // Shared TypeScript types for TravelAgent AI frontend
 
 export interface TripRequest {
+  origin: string;
   destination: string;
   start_date: string;
   end_date: string;
@@ -18,6 +19,7 @@ export interface AgentUpdate {
 }
 
 export interface TripPlan {
+  origin: string;
   destination: string;
   duration_days: number;
   budget_usd: number;

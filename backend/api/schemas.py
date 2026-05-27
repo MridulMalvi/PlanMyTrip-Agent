@@ -12,6 +12,11 @@ from pydantic import BaseModel, Field
 class TripRequest(BaseModel):
     """Payload that the user submits to kick off a trip-planning session."""
 
+    origin: str = Field(
+        ...,
+        examples=["Mumbai, India"],
+        description="City and country the traveler is departing from.",
+    )
     destination: str = Field(
         ...,
         examples=["Tokyo, Japan"],
@@ -74,6 +79,7 @@ class AgentUpdate(BaseModel):
 class TripPlan(BaseModel):
     """Structured fields extracted from the crew output."""
 
+    origin: str = ""
     destination: str
     duration_days: int
     budget_usd: float

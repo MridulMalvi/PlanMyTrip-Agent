@@ -33,7 +33,9 @@ def _make_tasks(request: TripRequest, planner, optimizer, budgeter, local_exp):
     """Build the four CrewAI tasks and return them in execution order."""
 
     trip_context = (
+        f"Origin (departure city): {request.origin}\n"
         f"Destination: {request.destination}\n"
+        f"Route: {request.origin} → {request.destination}\n"
         f"Travel dates: {request.start_date} → {request.end_date} "
         f"({request.duration_days} days)\n"
         f"Total budget: ${request.budget_usd:,.0f} USD\n"
@@ -46,7 +48,9 @@ def _make_tasks(request: TripRequest, planner, optimizer, budgeter, local_exp):
             f"Research the following trip and compile concrete options:\n\n"
             f"{trip_context}\n\n"
             "Deliverables:\n"
-            "1. FLIGHTS — 2–3 options with airline, route, estimated price per person, "
+            "1. FLIGHTS — 2–3 options flying from "
+            f"{request.origin} to {request.destination} "
+            "with airline, route, estimated price per person, "
             "and typical flight duration.\n"
             "2. HOTELS — 2–3 options with name, star rating, location, nightly rate, "
             "and a brief pro/con note.\n"
@@ -145,8 +149,8 @@ def _make_tasks(request: TripRequest, planner, optimizer, budgeter, local_exp):
 def build_crew(request: TripRequest, settings: Settings) -> dict:
     """Run the crew synchronously and return a result dict."""
     llm = LLM(
-        model=settings.openai_model,
-        api_key=settings.openai_api_key,
+        model=settings.gemini_model,
+        api_key=settings.gemini_api_key,
         temperature=0.3,
     )
 
@@ -183,6 +187,7 @@ def build_crew(request: TripRequest, settings: Settings) -> dict:
             {"agent": "Local Expert Agent", "status": "done", "message": "Hidden gems, authentic restaurants & cultural tips added.", "output": _get(3)},
         ],
         "plan": {
+            "origin": request.origin,
             "destination": request.destination,
             "duration_days": request.duration_days,
             "budget_usd": request.budget_usd,
@@ -220,8 +225,8 @@ def build_crew_streaming(
       status: "done" | "error"
     """
     llm = LLM(
-        model=settings.openai_model,
-        api_key=settings.openai_api_key,
+        model=settings.gemini_model,
+        api_key=settings.gemini_api_key,
         temperature=0.3,
     )
 
@@ -274,6 +279,7 @@ def build_crew_streaming(
     local_out      = outputs[3] if len(outputs) > 3 else ""
 
     return {
+        "origin": request.origin,
         "destination": request.destination,
         "duration_days": request.duration_days,
         "budget_usd": request.budget_usd,
