@@ -121,6 +121,12 @@ export function ItineraryViewer({ plan, agents, isStreaming }: Props) {
                 className="markdown-body"
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(tab.content) }}
               />
+            ) : agentStatus === 'done' ? (
+              <div className="empty-state" style={{ height: 'auto', paddingTop: 60 }}>
+                <div className="empty-icon">⚠️</div>
+                <div className="empty-title">No output received from {tab.agentName}</div>
+                <div className="empty-subtitle">The agent completed but returned empty content.</div>
+              </div>
             ) : agentStatus === 'idle' && !isStreaming ? (
               <div className="empty-state" style={{ height: 'auto', paddingTop: 60 }}>
                 <div className="empty-icon">{tab.icon}</div>
