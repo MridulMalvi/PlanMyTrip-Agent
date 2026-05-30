@@ -1,22 +1,28 @@
-from openai import OpenAI
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
 
-# Initialize the client with your API key
-client = OpenAI(api_key='fe_oa_e23004d7d4e1f5845e2fbf0756f3e8e349e27f59c4190e1f')
+# Load API key from .env file
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    print("❌ GEMINI_API_KEY not found in environment variables.")
+    print("   Make sure you have a .env file with GEMINI_API_KEY=your-key-here")
+    exit(1)
+
+genai.configure(api_key=api_key)
 
 try:
-    print("Sending test request to OpenAI...")
-    
-    # Make a simple request to a basic model
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": "Say 'Your API key is working!' if you get this."}
-        ],
-        max_tokens=20
+    print("Sending test request to Gemini...")
+
+    model = genai.GenerativeModel("gemini-2.0-flash")
+    response = model.generate_content(
+        "Say 'Your Gemini API key is working!' if you get this."
     )
-    
+
     print("\n✅ Success! The API responded with:")
-    print(response.choices[0].message.content)
+    print(response.text)
 
 except Exception as e:
     print("\n❌ There was an error. Your API key might be invalid, expired, or out of credits.")

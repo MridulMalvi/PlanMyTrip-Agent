@@ -69,7 +69,7 @@ MOCK_CREW_RESULT = {
 @patch("api.routes.build_crew", return_value=MOCK_CREW_RESULT)
 def test_plan_trip_success(mock_build_crew):
     mock_settings = MagicMock()
-    mock_settings.openai_api_key = "sk-test-key"
+    mock_settings.gemini_api_key = "AIza-test-key"
     app.dependency_overrides[get_settings] = lambda: mock_settings
 
     response = client.post("/api/trip/plan", json=SAMPLE_REQUEST)
@@ -84,13 +84,13 @@ def test_plan_trip_success(mock_build_crew):
 
 def test_plan_trip_missing_api_key():
     mock_settings = MagicMock()
-    mock_settings.openai_api_key = ""  # Missing key
+    mock_settings.gemini_api_key = ""  # Missing key
     app.dependency_overrides[get_settings] = lambda: mock_settings
 
     response = client.post("/api/trip/plan", json=SAMPLE_REQUEST)
 
     assert response.status_code == 503
-    assert "OPENAI_API_KEY" in response.json()["detail"]
+    assert "GEMINI_API_KEY" in response.json()["detail"]
 
 
 def test_plan_trip_invalid_payload():
