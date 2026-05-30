@@ -17,7 +17,10 @@ def setup_logging(debug: bool = False) -> logging.Logger:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    handler = logging.StreamHandler(sys.stdout)
+    # Force UTF-8 so emoji in CrewAI logs don't crash on Windows (cp1252)
+    import io
+    utf8_stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    handler = logging.StreamHandler(utf8_stdout)
     handler.setFormatter(formatter)
 
     # Root logger
