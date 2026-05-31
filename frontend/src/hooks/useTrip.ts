@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { TripRequest, TripState, AgentUpdate, StreamEvent, TripPlan } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const AGENT_NAMES = [
   'Planning Agent',

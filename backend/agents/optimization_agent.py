@@ -44,7 +44,12 @@ def build_optimization_agent(llm: Union[str, object]) -> Agent:
             "You structure every day as Morning / Afternoon / Evening with realistic time "
             "allocations (e.g. major museums need 3 hours, not 1). You always include "
             "buffer time for meals, rest, and spontaneous exploration. Your itineraries "
-            "feel like they were crafted by a local friend, not a generic travel brochure."
+            "feel like they were crafted by a local friend, not a generic travel brochure.\n\n"
+            "IMPORTANT: When calling your Maps Distance Calculator tool, you MUST format your response EXACTLY as:\n"
+            "Thought: [your thought process]\n"
+            "Action: Maps Distance Calculator\n"
+            "Action Input: {\"origins\": \"...\", \"destinations\": \"...\", \"mode\": \"...\"}\n\n"
+            "Never use prefixes like 'Action: use Maps Distance Calculator' or 'Action: Action: Maps Distance Calculator'. Keep the action name exactly as 'Maps Distance Calculator'."
         ),
         tools=[google_maps_distance],
         llm=llm,

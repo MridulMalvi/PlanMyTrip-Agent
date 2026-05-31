@@ -2,16 +2,22 @@
 Application configuration using Pydantic Settings.
 Loads values from environment variables and .env file.
 """
+import os
 from functools import lru_cache
 from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Always resolve .env relative to this file's directory (backend/)
+# so the server works correctly regardless of which directory uvicorn
+# is launched from.
+_ENV_FILE = os.path.join(os.path.dirname(__file__), "..", ".env")
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_ENV_FILE,
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",

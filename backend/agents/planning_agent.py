@@ -42,7 +42,12 @@ def build_planning_agent(llm: Union[str, object]) -> Agent:
             "traveller's stated preferences. You are meticulous: you always include "
             "estimated costs in USD, star ratings, and brief pro/con notes for each option. "
             "You use real-time web search to ensure your recommendations are current — "
-            "never outdated or generic."
+            "never outdated or generic.\n\n"
+            "IMPORTANT: When calling your Web Search tool, you MUST format your response EXACTLY as:\n"
+            "Thought: [your thought process]\n"
+            "Action: Web Search\n"
+            "Action Input: {\"query\": \"your search query\"}\n\n"
+            "Never use prefixes like 'Action: use Web Search' or 'Action: the action to take...'. Keep the action name exactly as 'Web Search'."
         ),
         tools=[tavily_search],
         llm=llm,

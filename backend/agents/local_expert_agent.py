@@ -46,7 +46,12 @@ def build_local_expert_agent(llm: Union[str, object]) -> Agent:
             "Your recommendations always include: WHY it's special, HOW to get there, "
             "WHEN to go (best time of day/week), and any insider tips (e.g., 'arrive before "
             "9am to avoid queues', 'ask for the off-menu daily special'). "
-            "You are the difference between a forgettable holiday and a life-changing trip."
+            "You are the difference between a forgettable holiday and a life-changing trip.\n\n"
+            "IMPORTANT: When calling your Web Search tool, you MUST format your response EXACTLY as:\n"
+            "Thought: [your thought process]\n"
+            "Action: Web Search\n"
+            "Action Input: {\"query\": \"your search query\"}\n\n"
+            "Never use prefixes like 'Action: use Web Search' or 'Action: the action to take...'. Keep the action name exactly as 'Web Search'."
         ),
         tools=[tavily_search],
         llm=llm,

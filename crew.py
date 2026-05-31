@@ -152,6 +152,8 @@ def build_crew(request: TripRequest, settings: Settings) -> dict:
         model=settings.gemini_model,
         api_key=settings.gemini_api_key,
         temperature=0.3,
+        max_retries=6,          # auto-retry on 429 / transient errors
+        timeout=120,            # seconds per LLM call
     )
 
     planner   = build_planning_agent(llm)
@@ -228,6 +230,8 @@ def build_crew_streaming(
         model=settings.gemini_model,
         api_key=settings.gemini_api_key,
         temperature=0.3,
+        max_retries=6,          # auto-retry on 429 / transient errors
+        timeout=120,            # seconds per LLM call
     )
 
     planner   = build_planning_agent(llm)
@@ -248,6 +252,12 @@ def build_crew_streaming(
     for i, (task, agent, meta) in enumerate(zip(tasks, agents, AGENT_META)):
         agent_name, start_msg, done_msg = meta
         callback(agent_name, "running", start_msg, "")
+
+        # Pacing: Sleep for 15 seconds before starting subsequent agents
+        # to respect the Gemini free tier's 5 requests-per-minute (RPM) rate limit.
+        import time
+        if i > 0:
+            time.sleep(15)
 
         # Attach context outputs from previous tasks
         if i > 0 and outputs:
