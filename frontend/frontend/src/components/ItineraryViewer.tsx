@@ -18,12 +18,12 @@ function renderMarkdown(md: string): string {
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     // HR
     .replace(/^---$/gm, '<hr/>')
-    // Lists (handles -, *, •, and numbered lists)
-    .replace(/^[-*•]\s+(.+)$/gm, '<li>$1</li>')
-    .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
+    // Lists
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
     // Paragraphs
     .replace(/\n\n/g, '</p><p>')
-    // Wrap adjacent list items in <ul> tags
+    // Emoji lines → preserve
     .replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
 
   // Collapse adjacent uls

@@ -18,17 +18,17 @@ const PRESET_PLACES = [
 export function TripForm({ onSubmit, disabled }: Props) {
   const today = new Date();
   const defaultStart = new Date(today.getTime() + 30 * 86400000);
-  const defaultEnd = new Date(today.getTime() + 37 * 86400000);
+  const defaultEnd   = new Date(today.getTime() + 37 * 86400000);
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
-  const [origin, setOrigin] = useState('San Francisco');
-  const [destination, setDestination] = useState('Tokyo');
-  const [startDate, setStartDate] = useState('2026-06-14');
-  const [endDate, setEndDate] = useState('2026-06-21');
-  const [budgetUsd, setBudgetUsd] = useState(3500);
-  const [travelers, setTravelers] = useState(2);
-  const [preferences, setPreferences] = useState('Food, culture, walking. Mid-range hotels. Light on touristy stuff.');
-  const [showOriginPresets, setShowOriginPresets] = useState(false);
+  const [origin, setOrigin]           = useState('');
+  const [destination, setDestination] = useState('');
+  const [startDate, setStartDate]     = useState(fmt(defaultStart));
+  const [endDate, setEndDate]         = useState(fmt(defaultEnd));
+  const [budgetUsd, setBudgetUsd]     = useState(3000);
+  const [travelers, setTravelers]     = useState(2);
+  const [preferences, setPreferences] = useState('');
+  const [showOriginPresets, setShowOriginPresets]           = useState(false);
   const [showDestinationPresets, setShowDestinationPresets] = useState(false);
 
   const durationDays = Math.max(
@@ -59,8 +59,8 @@ export function TripForm({ onSubmit, disabled }: Props) {
     <div style={{
       position: 'absolute',
       zIndex: 50,
-      background: 'var(--c-bg-card)',
-      border: '1.5px solid var(--c-border)',
+      background: '#0d1320',
+      border: '1px solid var(--c-border)',
       borderRadius: 'var(--r-md)',
       marginTop: 4,
       width: '100%',
@@ -76,7 +76,6 @@ export function TripForm({ onSubmit, disabled }: Props) {
             style={{
               padding: '10px 14px',
               fontSize: '0.85rem',
-              fontFamily: "'DM Sans', sans-serif",
               cursor: 'pointer',
               color: 'var(--c-text)',
               transition: 'background 0.15s',
@@ -84,7 +83,7 @@ export function TripForm({ onSubmit, disabled }: Props) {
               alignItems: 'center',
               gap: 8,
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'var(--c-accent-muted)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             onMouseDown={() => onSelect(p)}
           >
@@ -129,7 +128,7 @@ export function TripForm({ onSubmit, disabled }: Props) {
           color: 'var(--c-accent)',
           fontSize: '1.2rem',
           flexShrink: 0,
-        }}></div>
+        }}>✈️</div>
 
         {/* Destination */}
         <div style={{ flex: 1, position: 'relative' }}>
@@ -190,8 +189,9 @@ export function TripForm({ onSubmit, disabled }: Props) {
         <div className="budget-display">
           <div>
             <span className="budget-value">${budgetUsd.toLocaleString()}</span>
+            <span className="budget-label"> USD</span>
           </div>
-          <span className="budget-label">Total budget (USD)</span>
+          <span className="budget-label">per person · total budget</span>
         </div>
         <input
           id="budget-slider"

@@ -17,9 +17,9 @@ export default function App() {
   useEffect(() => {
     if (isDone && plan) {
       const route = plan.origin ? `${plan.origin} → ${plan.destination}` : plan.destination;
-      document.title = `${route} — PlanMyTrip AI`;
+      document.title = `${route} — TravelAgent AI`;
     } else {
-      document.title = 'PlanMyTrip AI — AI-Powered Trip Planner';
+      document.title = 'TravelAgent AI — AI-Powered Trip Planner';
     }
   }, [isDone, plan]);
 
@@ -27,14 +27,13 @@ export default function App() {
     planTrip(req);
   }
 
-
   return (
     <div className="app">
       {/* ── Header ── */}
       <header className="header">
         <div className="header-logo">
-          <div className="header-logo-icon">🚞</div>
-          <span className="header-logo-text">PlanMyTrip AI</span>
+          <div className="header-logo-icon">✈️</div>
+          <span className="header-logo-text">TravelAgent AI</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -62,7 +61,6 @@ export default function App() {
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              fontFamily: "'DM Sans', sans-serif",
             }}>
               <span style={{
                 width: 8, height: 8, borderRadius: '50%',
@@ -84,7 +82,7 @@ export default function App() {
             </button>
           )}
 
-          <span className="header-badge">Multi-Agent AI</span>
+          <span className="header-badge">Powered by CrewAI</span>
         </div>
       </header>
 
@@ -96,14 +94,14 @@ export default function App() {
 
           {/* Destination hero once plan is streaming/done */}
           {plan && (
-            <div className="dest-hero fade-in">
+                      <div className="dest-hero fade-in">
               {plan.origin && (
                 <div style={{ fontSize: '0.75rem', color: 'var(--c-text-muted)', marginBottom: 4, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   {plan.origin}
                 </div>
               )}
               <div className="dest-name" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {plan.origin && <span style={{ fontSize: '0.7em', opacity: 0.5 }}>🚞</span>}
+                {plan.origin && <span style={{ fontSize: '0.7em', opacity: 0.5 }}>✈️</span>}
                 {plan.destination}
               </div>
               <div className="dest-meta">

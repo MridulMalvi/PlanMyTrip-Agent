@@ -18,12 +18,12 @@ function renderMarkdown(md: string): string {
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     // HR
     .replace(/^---$/gm, '<hr/>')
-    // Lists (handles -, *, •, and numbered lists)
-    .replace(/^[-*•]\s+(.+)$/gm, '<li>$1</li>')
-    .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
+    // Lists
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
     // Paragraphs
     .replace(/\n\n/g, '</p><p>')
-    // Wrap adjacent list items in <ul> tags
+    // Emoji lines → preserve
     .replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
 
   // Collapse adjacent uls
@@ -55,25 +55,13 @@ export function ItineraryViewer({ plan, agents, isStreaming }: Props) {
     { key: 'local',     label: 'Local Tips',icon: '🌿', content: plan?.local_output     ?? '', agentName: 'Local Expert Agent' },
   ];
 
-  if (!plan && !isStreaming) {
-    return (
-      <div className="empty-state">
-        <div className="empty-icon">🌍</div>
-        <div className="empty-title">Your itinerary will appear here</div>
-        <div className="empty-subtitle">
-          Fill in the form on the left and click "Plan My Trip" to watch the AI agents build your perfect trip in real time.
-        </div>
-      </div>
-    );
-  }
-
   function getAgentStatus(name: string) {
     return agents.find(a => a.agent === name)?.status ?? 'idle';
   }
 
   return (
     <div className="results-panel">
-      {/* Tab bar */}
+      {/* Tab bar — always visible */}
       <div className="results-tabs">
         {tabs.map((tab) => {
           const status = getAgentStatus(tab.agentName);
@@ -91,6 +79,7 @@ export function ItineraryViewer({ plan, agents, isStreaming }: Props) {
                   background: 'var(--c-running)',
                   animation: 'pulse-dot 1.2s infinite',
                   display: 'inline-block',
+                  flexShrink: 0,
                 }} />
               )}
               {status === 'done' && (
@@ -101,41 +90,54 @@ export function ItineraryViewer({ plan, agents, isStreaming }: Props) {
         })}
       </div>
 
-      {/* Tab content */}
-      {tabs.map((tab) => {
-        if (tab.key !== activeTab) return null;
-        const agentStatus = getAgentStatus(tab.agentName);
-
-        return (
-          <div key={tab.key} className="tab-content fade-in">
-            {agentStatus === 'running' && (
-              <LoadingSkeleton />
-            )}
-            {agentStatus === 'error' && (
-              <div className="error-banner" style={{ margin: 0, marginBottom: 20 }}>
-                ⚠️ This agent encountered an error. Other agents may still complete.
-              </div>
-            )}
-            {tab.content ? (
-              <div
-                className="markdown-body"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(tab.content) }}
-              />
-            ) : agentStatus === 'done' ? (
-              <div className="empty-state" style={{ height: 'auto', paddingTop: 60 }}>
-                <div className="empty-icon">⚠️</div>
-                <div className="empty-title">No output received from {tab.agentName}</div>
-                <div className="empty-subtitle">The agent completed but returned empty content.</div>
-              </div>
-            ) : agentStatus === 'idle' && !isStreaming ? (
-              <div className="empty-state" style={{ height: 'auto', paddingTop: 60 }}>
-                <div className="empty-icon">{tab.icon}</div>
-                <div className="empty-title">Waiting for {tab.agentName}</div>
-              </div>
-            ) : null}
+      {/* Empty state inside content area when no plan */}
+      {!plan && !isStreaming ? (
+        <div className="tab-content">
+          <div className="empty-state">
+            <div className="empty-icon">🌍</div>
+            <div className="empty-title">Your itinerary will appear here</div>
+            <div className="empty-subtitle">
+              Fill in the form on the left and click "Plan My Trip" to watch the AI agents build your perfect trip in real time.
+            </div>
           </div>
-        );
-      })}
+        </div>
+      ) : (
+        /* Tab content */
+        tabs.map((tab) => {
+          if (tab.key !== activeTab) return null;
+          const agentStatus = getAgentStatus(tab.agentName);
+
+          return (
+            <div key={tab.key} className="tab-content fade-in">
+              {agentStatus === 'running' && (
+                <LoadingSkeleton />
+              )}
+              {agentStatus === 'error' && (
+                <div className="error-banner" style={{ margin: 0, marginBottom: 20 }}>
+                  ⚠️ This agent encountered an error. Other agents may still complete.
+                </div>
+              )}
+              {tab.content ? (
+                <div
+                  className="markdown-body"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(tab.content) }}
+                />
+              ) : agentStatus === 'done' ? (
+                <div className="empty-state" style={{ height: 'auto', paddingTop: 60 }}>
+                  <div className="empty-icon">⚠️</div>
+                  <div className="empty-title">No output received from {tab.agentName}</div>
+                  <div className="empty-subtitle">The agent completed but returned empty content.</div>
+                </div>
+              ) : agentStatus === 'idle' && !isStreaming ? (
+                <div className="empty-state" style={{ height: 'auto', paddingTop: 60 }}>
+                  <div className="empty-icon">{tab.icon}</div>
+                  <div className="empty-title">Waiting for {tab.agentName}</div>
+                </div>
+              ) : null}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }

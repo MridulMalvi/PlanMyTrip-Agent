@@ -21,7 +21,7 @@ export function AgentPanel({ agents, doneCount, total }: Props) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <p className="section-title" style={{ margin: 0 }}>🤖 AI Agents</p>
         {doneCount > 0 && (
-          <span style={{ fontSize: '0.75rem', color: 'var(--c-accent)', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--c-aurora-4)', fontWeight: 600 }}>
             {pct}% complete
           </span>
         )}
@@ -46,7 +46,7 @@ export function AgentPanel({ agents, doneCount, total }: Props) {
                 className="agent-icon"
                 style={{
                   background: agent.status === 'idle'
-                    ? 'rgba(196,120,90,0.07)'
+                    ? 'rgba(255,255,255,0.04)'
                     : `${meta.color}1a`,
                   border: agent.status !== 'idle' ? `1px solid ${meta.color}33` : undefined,
                 }}

@@ -22,16 +22,14 @@ export function ResultsLayout({ plan, agents, isStreaming }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      {/* View switcher */}
-      {(plan || isStreaming) && (
-        <div style={{
+      {/* View switcher — always visible */}
+      <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: 6,
           padding: '10px 24px',
-          borderBottom: '1.5px solid var(--c-border)',
-          background: 'rgba(245,240,232,0.95)',
-          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid var(--c-border)',
+          background: 'var(--c-bg)',
         }}>
           {viewBtns.map(b => (
             <button
@@ -41,12 +39,11 @@ export function ResultsLayout({ plan, agents, isStreaming }: Props) {
                 padding: '6px 16px',
                 borderRadius: 'var(--r-sm)',
                 border: '1.5px solid ' + (view === b.key ? 'var(--c-accent)' : 'var(--c-border)'),
-                background: view === b.key ? 'var(--c-accent-muted)' : 'transparent',
-                color: view === b.key ? 'var(--c-accent-3)' : 'var(--c-text-muted)',
-                fontSize: '0.82rem',
-                fontWeight: 600,
+                background: view === b.key ? 'var(--c-accent-soft)' : 'transparent',
+                color: view === b.key ? 'var(--c-accent)' : 'var(--c-text-muted)',
                 fontFamily: "'Space Grotesk', sans-serif",
-                letterSpacing: '-0.01em',
+                fontSize: '0.83rem',
+                fontWeight: 500,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -58,7 +55,6 @@ export function ResultsLayout({ plan, agents, isStreaming }: Props) {
             </button>
           ))}
         </div>
-      )}
 
       {/* Content area */}
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
@@ -74,7 +70,7 @@ export function ResultsLayout({ plan, agents, isStreaming }: Props) {
         )}
         {view === 'split' && (
           <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', overflow: 'hidden' }}>
-          <div style={{ overflow: 'hidden', borderRight: '1px solid var(--c-border)' }}>
+            <div style={{ overflow: 'hidden', borderRight: '1px solid var(--c-border)' }}>
               <ItineraryViewer plan={plan} agents={agents} isStreaming={isStreaming} />
             </div>
             <div style={{ overflow: 'hidden' }}>

@@ -17,16 +17,15 @@ export default function App() {
   useEffect(() => {
     if (isDone && plan) {
       const route = plan.origin ? `${plan.origin} → ${plan.destination}` : plan.destination;
-      document.title = `${route} — PlanMyTrip AI`;
+      document.title = `${route} — TravelAgent AI`;
     } else {
-      document.title = 'PlanMyTrip AI — AI-Powered Trip Planner';
+      document.title = 'TravelAgent AI — AI-Powered Trip Planner';
     }
   }, [isDone, plan]);
 
   function handleSubmit(req: TripRequest) {
     planTrip(req);
   }
-
 
   return (
     <div className="app">
@@ -41,6 +40,7 @@ export default function App() {
           {isDone && plan && (
             <div style={{
               fontSize: '0.78rem',
+              fontFamily: '\'DM Sans\', sans-serif',
               color: 'var(--c-text-muted)',
               display: 'flex',
               alignItems: 'center',
@@ -50,6 +50,7 @@ export default function App() {
                 width: 8, height: 8, borderRadius: '50%',
                 background: 'var(--c-success)',
                 display: 'inline-block',
+                flexShrink: 0,
               }} />
               Plan ready · {plan.origin ? `${plan.origin} → ${plan.destination}` : plan.destination}
             </div>
@@ -58,11 +59,11 @@ export default function App() {
           {isStreaming && (
             <div style={{
               fontSize: '0.78rem',
+              fontFamily: '\'DM Sans\', sans-serif',
               color: 'var(--c-running)',
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              fontFamily: "'DM Sans', sans-serif",
             }}>
               <span style={{
                 width: 8, height: 8, borderRadius: '50%',
@@ -74,17 +75,22 @@ export default function App() {
             </div>
           )}
 
-          {(isStreaming || isDone) && (
-            <button
-              onClick={reset}
-              className="btn-secondary"
-              style={{ width: 'auto', padding: '6px 16px', marginTop: 0 }}
-            >
-              ↩ New Trip
-            </button>
-          )}
+          <button
+            onClick={reset}
+            className="btn-secondary"
+            disabled={!isStreaming && !isDone}
+            style={{
+              width: 'auto',
+              padding: '6px 16px',
+              marginTop: 0,
+              opacity: (!isStreaming && !isDone) ? 0.4 : 1,
+              cursor: (!isStreaming && !isDone) ? 'default' : 'pointer',
+            }}
+          >
+            ↩ New Trip
+          </button>
 
-          <span className="header-badge">Multi-Agent AI</span>
+          <span className="header-badge">MULTI-AGENT AI</span>
         </div>
       </header>
 
@@ -103,7 +109,7 @@ export default function App() {
                 </div>
               )}
               <div className="dest-name" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {plan.origin && <span style={{ fontSize: '0.7em', opacity: 0.5 }}>🚞</span>}
+                {plan.origin && <span style={{ fontSize: '0.7em', opacity: 0.5 }}></span>}
                 {plan.destination}
               </div>
               <div className="dest-meta">
