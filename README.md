@@ -4,26 +4,6 @@
 
 ---
 
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Architecture](#architecture)
-3. [Agent Pipeline](#agent-pipeline)
-4. [Backend](#backend)
-   - [Tech Stack](#backend-tech-stack)
-   - [Project Structure](#backend-project-structure)
-   - [API Endpoints](#api-endpoints)
-   - [SSE Streaming Protocol](#sse-streaming-protocol)
-5. [Frontend](#frontend)
-   - [Tech Stack](#frontend-tech-stack)
-   - [Project Structure](#frontend-project-structure)
-   - [State Machine](#state-machine)
-   - [Component Tree](#component-tree)
-6. [Environment Variables](#environment-variables)
-7. [Getting Started](#getting-started)
-8. [How It Works — End to End](#how-it-works--end-to-end)
-
----
 
 ## Overview
 
